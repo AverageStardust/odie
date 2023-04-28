@@ -1,0 +1,1 @@
+esbuild ./src/global.ts --minify --bundle --outfile=./dist/odie.min.js
