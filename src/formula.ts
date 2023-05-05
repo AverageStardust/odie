@@ -21,7 +21,7 @@ export class Formula implements FormulaData {
 
 	add(...args: FormulaArgs) {
 		const addend = formulaDataFromArgs(args);
-		const target = new Formula();
+		const target = new Formula(this);
 		for (let i = 0; i < addend.terms.length; i++) {
 			if (i < target.terms.length) {
 				target.terms[i] += addend.terms[i];
@@ -34,7 +34,7 @@ export class Formula implements FormulaData {
 
 	sub(...args: FormulaArgs) {
 		const subtrahend = formulaDataFromArgs(args);
-		const target = new Formula();
+		const target = new Formula(this);
 		for (let i = 0; i < subtrahend.terms.length; i++) {
 			if (i < target.terms.length) {
 				target.terms[i] -= subtrahend.terms[i];
@@ -47,7 +47,7 @@ export class Formula implements FormulaData {
 
 	mul(...args: FormulaArgs) {
 		const multiplier = formulaDataFromArgs(args);
-		const target = new Formula();
+		const target = new Formula(this);
 		const productTerms = Array(
 			Math.max(0, target.terms.length + multiplier.terms.length - 1)).fill(0);
 
@@ -63,7 +63,7 @@ export class Formula implements FormulaData {
 
 	divWithRem(...args: FormulaArgs): { quotient: Formula, remainder: Formula } {
 		const divisor = formulaDataFromArgs(args);
-		const target = new Formula();
+		const target = new Formula(this);
 		const quotientTerms = Array(
 			Math.max(0, target.terms.length - divisor.terms.length + 1));
 
@@ -90,7 +90,7 @@ export class Formula implements FormulaData {
 	}
 
 	rem(...args: FormulaArgs): Formula {
-		const target = new Formula();
+		const target = new Formula(this);
 		const remainder = this.divWithRem(...args as any).remainder;
 		target.terms = remainder.terms;
 		return remainder;

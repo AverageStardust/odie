@@ -60,7 +60,7 @@ export class Bound2 implements Bound2Data {
 	}
 
 	minBound(...args: Bound2Args): null | Bound2 {
-		const target = new Bound2();
+		const target = new Bound2(this);
 		const value = bound2DataFromArgs(args);
 		if (target.low.x >= value.high.x || target.high.x <= value.low.x) return null;
 		if (target.low.y >= value.high.y || target.high.y <= value.low.y) return null;

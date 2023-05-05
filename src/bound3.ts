@@ -58,7 +58,7 @@ export class Bound3 implements Bound3Data {
 	}
 
 	minBound(...args: Bound3Args): null | Bound3 {
-		const target = new Bound3();
+		const target = new Bound3(this);
 		const value = bound3DataFromArgs(args);
 		if (target.low.x >= value.high.x || target.high.x <= value.low.x) return null;
 		if (target.low.y >= value.high.y || target.high.y <= value.low.y) return null;

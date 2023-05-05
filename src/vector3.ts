@@ -51,7 +51,7 @@ export class Vec3 implements Vec3Data {
 
 	add(...args: Vec3Args): Vec3 {
 		const addend = vec3DataFromArgs(args);
-		const target = new Vec3();
+		const target = new Vec3(this);
 		target.x += addend.x;
 		target.y += addend.y;
 		target.z += addend.z;
@@ -60,7 +60,7 @@ export class Vec3 implements Vec3Data {
 
 	sub(...args: Vec3Args): Vec3 {
 		const subtrahend = vec3DataFromArgs(args);
-		const target = new Vec3();
+		const target = new Vec3(this);
 		target.x -= subtrahend.x;
 		target.y -= subtrahend.y;
 		target.z -= subtrahend.z;
@@ -69,7 +69,7 @@ export class Vec3 implements Vec3Data {
 
 	mul(...args: Vec3Args): Vec3 {
 		const multiplier = vec3DataFromArgs(args);
-		const target = new Vec3();
+		const target = new Vec3(this);
 		target.x *= multiplier.x;
 		target.y *= multiplier.y;
 		target.z *= multiplier.z;
@@ -78,7 +78,7 @@ export class Vec3 implements Vec3Data {
 
 	div(...args: Vec3Args): Vec3 {
 		const divisor = vec3DataFromArgs(args);
-		const target = new Vec3();
+		const target = new Vec3(this);
 		target.x /= divisor.x;
 		target.y /= divisor.y;
 		target.z /= divisor.z;
@@ -87,7 +87,7 @@ export class Vec3 implements Vec3Data {
 
 	rem(...args: Vec3Args): Vec3 {
 		const divisor = vec3DataFromArgs(args);
-		const target = new Vec3();
+		const target = new Vec3(this);
 		target.x %= divisor.x;
 		target.y %= divisor.y;
 		target.z %= divisor.z;
@@ -96,7 +96,7 @@ export class Vec3 implements Vec3Data {
 
 	mod(...args: Vec3Args): Vec3 {
 		const divisor = vec3DataFromArgs(args);
-		const target = new Vec3();
+		const target = new Vec3(this);
 		target.x = ((target.x % divisor.x) + divisor.x) % divisor.x;
 		target.y = ((target.y % divisor.y) + divisor.y) % divisor.y;
 		target.z = ((target.z % divisor.z) + divisor.z) % divisor.z;
@@ -104,7 +104,7 @@ export class Vec3 implements Vec3Data {
 	}
 
 	cross(...args: Vec3Args): Vec3 {
-		const target = new Vec3();
+		const target = new Vec3(this);
 		const multiplier = vec3DataFromArgs(args);
 		const newX = target.y * multiplier.z - target.z * multiplier.y;
 		const newY = target.z * multiplier.x - target.x * multiplier.z;
@@ -117,7 +117,7 @@ export class Vec3 implements Vec3Data {
 	lerp(...args: [...Vec3Args, number]): Vec3 {
 		const value = vec3DataFromArgs(args.slice(0, args.length - 1) as Vec3Args);
 		const amount = args[args.length - 1] as number;
-		const target = new Vec3();
+		const target = new Vec3(this);
 		target.x = target.x + (value.x - target.x) * amount;
 		target.y = target.y + (value.y - target.y) * amount;
 		target.z = target.z + (value.z - target.z) * amount;
@@ -126,7 +126,7 @@ export class Vec3 implements Vec3Data {
 
 	max(...args: Vec3Args): Vec3 {
 		const value = vec3DataFromArgs(args);
-		const target = new Vec3();
+		const target = new Vec3(this);
 		target.x = Math.max(target.x, value.x);
 		target.y = Math.max(target.y, value.y);
 		target.z = Math.max(target.z, value.z);
@@ -135,7 +135,7 @@ export class Vec3 implements Vec3Data {
 
 	min(...args: Vec3Args): Vec3 {
 		const value = vec3DataFromArgs(args);
-		const target = new Vec3();
+		const target = new Vec3(this);
 		target.x = Math.min(target.x, value.x);
 		target.y = Math.min(target.y, value.y);
 		target.z = Math.min(target.z, value.z);
@@ -143,7 +143,7 @@ export class Vec3 implements Vec3Data {
 	}
 
 	abs(): Vec3 {
-		const target = new Vec3();
+		const target = new Vec3(this);
 		target.x = Math.abs(target.x);
 		target.y = Math.abs(target.y);
 		target.z = Math.abs(target.z);
@@ -151,7 +151,7 @@ export class Vec3 implements Vec3Data {
 	}
 
 	floor(): Vec3 {
-		const target = new Vec3();
+		const target = new Vec3(this);
 		target.x = Math.floor(target.x);
 		target.y = Math.floor(target.y);
 		target.z = Math.floor(target.z);
@@ -159,7 +159,7 @@ export class Vec3 implements Vec3Data {
 	}
 
 	round(): Vec3 {
-		const target = new Vec3();
+		const target = new Vec3(this);
 		target.x = Math.round(target.x);
 		target.y = Math.round(target.y);
 		target.z = Math.round(target.z);
@@ -167,7 +167,7 @@ export class Vec3 implements Vec3Data {
 	}
 
 	ceil(): Vec3 {
-		const target = new Vec3();
+		const target = new Vec3(this);
 		target.x = Math.ceil(target.x);
 		target.y = Math.ceil(target.y);
 		target.z = Math.ceil(target.z);
@@ -175,7 +175,7 @@ export class Vec3 implements Vec3Data {
 	}
 
 	norm(magnitude = 1): Vec3 {
-		const target = new Vec3();
+		const target = new Vec3(this);
 		const currentMagnitude = target.mag;
 		if (currentMagnitude === 0) return target;
 		const multiplier = magnitude / currentMagnitude;
@@ -186,7 +186,7 @@ export class Vec3 implements Vec3Data {
 	}
 
 	limit(magnitude = 1): Vec3 {
-		const target = new Vec3();
+		const target = new Vec3(this);
 		const currentMagnitude = target.mag;
 		if (currentMagnitude < magnitude) return target;
 		const multiplier = magnitude / currentMagnitude;

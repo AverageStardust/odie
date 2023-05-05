@@ -39,7 +39,7 @@ export class Vec2 implements Vec2Data {
 
 	add(...args: Vec2Args): Vec2 {
 		const addend = vec2DataFromArgs(args);
-		const target = new Vec2();
+		const target = new Vec2(this);
 		target.x += addend.x;
 		target.y += addend.y;
 		return target;
@@ -47,7 +47,7 @@ export class Vec2 implements Vec2Data {
 
 	sub(...args: Vec2Args): Vec2 {
 		const subtrahend = vec2DataFromArgs(args);
-		const target = new Vec2();
+		const target = new Vec2(this);
 		target.x -= subtrahend.x;
 		target.y -= subtrahend.y;
 		return target;
@@ -55,7 +55,7 @@ export class Vec2 implements Vec2Data {
 
 	mul(...args: Vec2Args): Vec2 {
 		const multiplier = vec2DataFromArgs(args);
-		const target = new Vec2();
+		const target = new Vec2(this);
 		target.x *= multiplier.x;
 		target.y *= multiplier.y;
 		return target;
@@ -63,7 +63,7 @@ export class Vec2 implements Vec2Data {
 
 	div(...args: Vec2Args): Vec2 {
 		const divisor = vec2DataFromArgs(args);
-		const target = new Vec2();
+		const target = new Vec2(this);
 		target.x /= divisor.x;
 		target.y /= divisor.y;
 		return target;
@@ -71,7 +71,7 @@ export class Vec2 implements Vec2Data {
 
 	rem(...args: Vec2Args): Vec2 {
 		const divisor = vec2DataFromArgs(args);
-		const target = new Vec2();
+		const target = new Vec2(this);
 		target.x %= divisor.x;
 		target.y %= divisor.y;
 		return target;
@@ -79,7 +79,7 @@ export class Vec2 implements Vec2Data {
 
 	mod(...args: Vec2Args): Vec2 {
 		const divisor = vec2DataFromArgs(args);
-		const target = new Vec2();
+		const target = new Vec2(this);
 		target.x = ((target.x % divisor.x) + divisor.x) % divisor.x;
 		target.y = ((target.y % divisor.y) + divisor.y) % divisor.y;
 		return target;
@@ -88,7 +88,7 @@ export class Vec2 implements Vec2Data {
 	lerp(...args: [...Vec2Args, number]): Vec2 {
 		const value = vec2DataFromArgs(args.slice(0, args.length - 1) as Vec2Args);
 		const amount = args[args.length - 1] as number;
-		const target = new Vec2();
+		const target = new Vec2(this);
 		target.x = target.x + (value.x - target.x) * amount;
 		target.y = target.y + (value.y - target.y) * amount;
 		return target;
@@ -96,7 +96,7 @@ export class Vec2 implements Vec2Data {
 
 	max(...args: Vec2Args): Vec2 {
 		const value = vec2DataFromArgs(args);
-		const target = new Vec2();
+		const target = new Vec2(this);
 		target.x = Math.max(target.x, value.x);
 		target.y = Math.max(target.y, value.y);
 		return target;
@@ -104,42 +104,42 @@ export class Vec2 implements Vec2Data {
 
 	min(...args: Vec2Args): Vec2 {
 		const value = vec2DataFromArgs(args);
-		const target = new Vec2();
+		const target = new Vec2(this);
 		target.x = Math.min(target.x, value.x);
 		target.y = Math.min(target.y, value.y);
 		return target;
 	}
 
 	abs(): Vec2 {
-		const target = new Vec2();
+		const target = new Vec2(this);
 		target.x = Math.abs(target.x);
 		target.y = Math.abs(target.y);
 		return target;
 	}
 
 	floor(): Vec2 {
-		const target = new Vec2();
+		const target = new Vec2(this);
 		target.x = Math.floor(target.x);
 		target.y = Math.floor(target.y);
 		return target;
 	}
 
 	round(): Vec2 {
-		const target = new Vec2();
+		const target = new Vec2(this);
 		target.x = Math.round(target.x);
 		target.y = Math.round(target.y);
 		return target;
 	}
 
 	ceil(): Vec2 {
-		const target = new Vec2();
+		const target = new Vec2(this);
 		target.x = Math.ceil(target.x);
 		target.y = Math.ceil(target.y);
 		return target;
 	}
 
 	norm(magnitude = 1): Vec2 {
-		const target = new Vec2();
+		const target = new Vec2(this);
 		const currentMagnitude = target.mag;
 		if (currentMagnitude === 0) return target;
 		const multiplier = magnitude / currentMagnitude;
@@ -149,7 +149,7 @@ export class Vec2 implements Vec2Data {
 	}
 
 	limit(magnitude = 1): Vec2 {
-		const target = new Vec2();
+		const target = new Vec2(this);
 		const currentMagnitude = target.mag;
 		if (currentMagnitude < magnitude) return target;
 		const multiplier = magnitude / currentMagnitude;
@@ -159,7 +159,7 @@ export class Vec2 implements Vec2Data {
 	}
 
 	rotate(angle: number): Vec2 {
-		const target = new Vec2();
+		const target = new Vec2(this);
 		const cosAngle = Math.cos(angle);
 		const sinAngle = Math.sin(angle);
 		const x = target.x * cosAngle - target.y * sinAngle;
@@ -169,7 +169,7 @@ export class Vec2 implements Vec2Data {
 	}
 
 	rotateTo(direction: number): Vec2 {
-		const target = new Vec2();
+		const target = new Vec2(this);
 		const currentMagnitude = target.mag;
 		target.x = Math.cos(direction) * currentMagnitude;
 		target.y = Math.sin(direction) * currentMagnitude;
@@ -177,7 +177,7 @@ export class Vec2 implements Vec2Data {
 	}
 
 	alongDir(direction: number): Vec2 {
-		const target = new Vec2();
+		const target = new Vec2(this);
 		const cosAngle = Math.cos(direction);
 		const sinAngle = Math.sin(direction);
 		const mag = target.x * cosAngle - target.y * sinAngle;
