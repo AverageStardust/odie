@@ -9,44 +9,17 @@ export function templateDataFromArgs(args: TemplateArgs): TemplateData {
 	return {};
 }
 
-abstract class TemplateAbstract {
-	protected abstract getTarget(): Template;
-	
-	// equal
-}
-
-export class Template extends TemplateAbstract implements TemplateData {
+export class Template implements TemplateData {
 	// members
 
 	constructor(...args: [] | TemplateArgs) {
-		super();
-		// construct
-	}
-
-	protected getTarget(): Template {
-		return new Template(this);
-	}
-
-	get set() {
-		return new TemplateMutable(this);
-	}
-
-	copy() {
-		return new Template(this);
+		if (args.length === 0) {
+			// assign members
+		} else {
+			const { } = templateDataFromArgs(args);
+			// assign members
+		}
 	}
 
 	// toString
-}
-
-class TemplateMutable extends TemplateAbstract {
-	target: Template;
-
-	constructor(target: Template) {
-		super();
-		this.target = target;
-	}
-
-	protected getTarget(): Template {
-		return this.target;
-	}
 }

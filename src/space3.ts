@@ -33,28 +33,30 @@ export class Space3<T extends SpaceItem3> {
 		}
 	}
 
-	inRadius(radius: number, ...args: Vec3Args) {
-		const position = new Vec3(...args);
+	
+	inRadius(...args: [...Vec3Args, number]) {
+		const position = new Vec3(...args.slice(0, args.length - 1) as Vec3Args);
+		const radius = args[args.length - 1] as number;
 		const bound = new Bound3(
 			position.x - radius, position.y - radius, position.z - radius,
 			position.x + radius, position.y + radius, position.z + radius);
 		const itemArray: T[] = [];
-		this._inRadius(bound, radius ** 2, position, itemArray);
+		this._inRadius(bound, position, radius * radius, itemArray);
 		return new Set(itemArray);
 	}
 
-	private _inRadius(bound: Bound3, radiusSq: number, position: Vec3, itemArray: T[]) {
-		if (!this.bound.overlaps(bound)) return;
+	private _inRadius(bound: Bound3, position: Vec3, radiusSq: number, itemArray: T[]) {
+		if (!this.bound.hasPartialBound(bound)) return;
 
 		if (this.children !== null) {
-			this.children.lowXLowYLowZ._inRadius(bound, radiusSq, position, itemArray);
-			this.children.highXLowYLowZ._inRadius(bound, radiusSq, position, itemArray);
-			this.children.lowXHighYLowZ._inRadius(bound, radiusSq, position, itemArray);
-			this.children.highXHighYLowZ._inRadius(bound, radiusSq, position, itemArray);
-			this.children.lowXLowYHighZ._inRadius(bound, radiusSq, position, itemArray);
-			this.children.highXLowYHighZ._inRadius(bound, radiusSq, position, itemArray);
-			this.children.lowXHighYHighZ._inRadius(bound, radiusSq, position, itemArray);
-			this.children.highXHighYHighZ._inRadius(bound, radiusSq, position, itemArray);
+			this.children.lowXLowYLowZ._inRadius(bound, position, radiusSq, itemArray);
+			this.children.highXLowYLowZ._inRadius(bound, position, radiusSq, itemArray);
+			this.children.lowXHighYLowZ._inRadius(bound, position, radiusSq, itemArray);
+			this.children.highXHighYLowZ._inRadius(bound, position, radiusSq, itemArray);
+			this.children.lowXLowYHighZ._inRadius(bound, position, radiusSq, itemArray);
+			this.children.highXLowYHighZ._inRadius(bound, position, radiusSq, itemArray);
+			this.children.lowXHighYHighZ._inRadius(bound, position, radiusSq, itemArray);
+			this.children.highXHighYHighZ._inRadius(bound, position, radiusSq, itemArray);
 			return;
 		}
 
@@ -72,9 +74,9 @@ export class Space3<T extends SpaceItem3> {
 	}
 
 	private _inBounds(bound: Bound3, itemArray: T[]) {
-		if (!this.bound.overlaps(bound)) return;
+		if (!this.bound.hasPartialBound(bound)) return;
 
-		if (this.bound.fitsIn(bound)) {
+		if (this.bound.hasBound(bound)) {
 			for (const item of this.items) {
 				itemArray.push(item);
 			}
@@ -94,7 +96,7 @@ export class Space3<T extends SpaceItem3> {
 		}
 
 		for (const item of this.items) {
-			if (bound.contains(item.position)) {
+			if (bound.hasVec(item.position)) {
 				itemArray.push(item);
 			}
 		}
@@ -102,7 +104,7 @@ export class Space3<T extends SpaceItem3> {
 
 	near(...args: Vec3Args): Set<T> {
 		const position = vec3DataFromArgs(args);
-		if (!this.bound.contains(position)) return new Set();
+		if (!this.bound.hasVec(position)) return new Set();
 		return this._near(position);
 	}
 

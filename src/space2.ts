@@ -22,31 +22,32 @@ export class Space2<T extends SpaceItem2> {
 	constructor(bound = new Bound2(), depthLimit = 8, leafItemLimit = 4) {
 		this.bound = bound;
 		this.depthLimit = depthLimit;
-		if (depthLimit === 0) {
+		if (this.depthLimit <= 0) {
 			this.leafItemLimit = Infinity;
 		} else {
 			this.leafItemLimit = leafItemLimit;
 		}
 	}
 
-	inRadius(radius: number, ...args: Vec2Args) {
-		const position = new Vec2(...args);
+	inRadius(...args: [...Vec2Args, number]) {
+		const position = new Vec2(...args.slice(0, args.length - 1) as Vec2Args);
+		const radius = args[args.length - 1] as number;
 		const bound = new Bound2(
 			position.x - radius, position.y - radius,
 			position.x + radius, position.y + radius);
 		const itemArray: T[] = [];
-		this._inRadius(bound, radius ** 2, position, itemArray);
+		this._inRadius(bound, position, radius * radius, itemArray);
 		return new Set(itemArray);
 	}
 
-	private _inRadius(bound: Bound2, radiusSq: number, position: Vec2, itemArray: T[]) {
-		if (!this.bound.overlaps(bound)) return;
+	private _inRadius(bound: Bound2, position: Vec2, radiusSq: number, itemArray: T[]) {
+		if (!this.bound.hasPartialBound(bound)) return;
 
 		if (this.children !== null) {
-			this.children.lowXLowY._inRadius(bound, radiusSq, position, itemArray);
-			this.children.highXLowY._inRadius(bound, radiusSq, position, itemArray);
-			this.children.lowXHighY._inRadius(bound, radiusSq, position, itemArray);
-			this.children.highXHighY._inRadius(bound, radiusSq, position, itemArray);
+			this.children.lowXLowY._inRadius(bound, position, radiusSq, itemArray);
+			this.children.highXLowY._inRadius(bound, position, radiusSq, itemArray);
+			this.children.lowXHighY._inRadius(bound, position, radiusSq, itemArray);
+			this.children.highXHighY._inRadius(bound, position, radiusSq, itemArray);
 			return;
 		}
 
@@ -64,9 +65,9 @@ export class Space2<T extends SpaceItem2> {
 	}
 
 	private _inBounds(bound: Bound2, itemArray: T[]) {
-		if (!this.bound.overlaps(bound)) return;
+		if (!this.bound.hasPartialBound(bound)) return;
 
-		if (this.bound.fitsIn(bound)) {
+		if (this.bound.hasBound(bound)) {
 			for (const item of this.items) {
 				itemArray.push(item);
 			}
@@ -82,7 +83,7 @@ export class Space2<T extends SpaceItem2> {
 		}
 
 		for (const item of this.items) {
-			if (bound.contains(item.position)) {
+			if (bound.hasVec(item.position)) {
 				itemArray.push(item);
 			}
 		}
@@ -90,7 +91,7 @@ export class Space2<T extends SpaceItem2> {
 
 	inCell(...args: Vec2Args): Set<T> {
 		const position = vec2DataFromArgs(args);
-		if (!this.bound.contains(position)) return new Set();
+		if (!this.bound.hasVec(position)) return new Set();
 		return this._inCell(position);
 	}
 

@@ -44,16 +44,11 @@ export function bound2DataFromArgs(args: Bound2Args): Bound2Data {
 	}
 }
 
-abstract class Bound2Abstract {
-	protected abstract getTarget(): Bound2;
-}
-
-export class Bound2 extends Bound2Abstract implements Bound2Data {
+export class Bound2 implements Bound2Data {
 	low: Vec2;
 	high: Vec2;
 
 	constructor(...args: [] | Bound2Args) {
-		super();
 		if (args.length === 0) {
 			this.low = new Vec2(0, 0);
 			this.high = new Vec2(1, 1);
@@ -64,58 +59,34 @@ export class Bound2 extends Bound2Abstract implements Bound2Data {
 		}
 	}
 
-	protected getTarget(): Bound2 {
-		return new Bound2(this);
-	}
-
-	get set() {
-		return new Bound2Mutable(this);
-	}
-
-	copy() {
-		return new Bound2(this);
-	}
-
-	equal(...args: Bound2Args): boolean {
+	minBound(...args: Bound2Args): null | Bound2 {
+		const target = new Bound2();
 		const value = bound2DataFromArgs(args);
-		const target = this.getTarget();
-		const wasEqual =
-			target.low.x === value.low.x && target.low.y === value.low.y &&
-			target.high.x === value.high.x && target.high.y === value.high.y;
-		target.low.x = value.low.x;
-		target.low.y = value.low.y;
-		target.high.x = value.high.x;
-		target.high.y = value.high.y;
-		return wasEqual;
+		if (target.low.x >= value.high.x || target.high.x <= value.low.x) return null;
+		if (target.low.y >= value.high.y || target.high.y <= value.low.y) return null;
+		target.low.x = Math.max(target.low.x, value.low.x),
+		target.low.y = Math.max(target.low.y, value.low.y),
+		target.high.x = Math.min(target.high.x, value.high.x),
+		target.high.y = Math.min(target.high.y, value.high.y);
+		return target;
 	}
 
-	contains(...args: Vec2Args): boolean {
+
+	hasVec(...args: Vec2Args): boolean {
 		const position = vec2DataFromArgs(args);
 		return (
 			position.x >= this.low.x && position.x <= this.high.x &&
 			position.y >= this.low.y && position.y <= this.high.y);
 	}
 
-	fitsIn(...args: Bound2Args): boolean {
+	hasBound(...args: Bound2Args): boolean {
 		const bound = bound2DataFromArgs(args);
 		if (bound.low.x > this.low.x || bound.high.x < this.high.x) return false;
 		if (bound.low.y > this.low.y || bound.high.y < this.high.y) return false;
 		return true;
 	}
 
-	overlap(...args: Bound2Args): null | Bound2 {
-		const value = bound2DataFromArgs(args);
-		if (this.low.x >= value.high.x || this.high.x <= value.low.x) return null;
-		if (this.low.y >= value.high.y || this.high.y <= value.low.y) return null;
-		return new Bound2(
-			Math.max(this.low.x, value.low.x),
-			Math.max(this.low.y, value.low.y),
-			Math.min(this.high.x, value.high.x),
-			Math.min(this.high.y, value.high.y)
-		);
-	}
-
-	overlaps(...args: Bound2Args): boolean {
+	hasPartialBound(...args: Bound2Args): boolean {
 		const value = bound2DataFromArgs(args);
 		if (this.low.x >= value.high.x || this.high.x <= value.low.x) return false;
 		if (this.low.y >= value.high.y || this.high.y <= value.low.y) return false;
@@ -134,18 +105,5 @@ export class Bound2 extends Bound2Abstract implements Bound2Data {
 
 	get area() {
 		return (this.high.x - this.low.x) * (this.high.y - this.low.y);
-	}
-}
-
-class Bound2Mutable extends Bound2Abstract {
-	target: Bound2;
-
-	constructor(target: Bound2) {
-		super();
-		this.target = target;
-	}
-
-	protected getTarget(): Bound2 {
-		return this.target;
 	}
 }

@@ -121,9 +121,7 @@ export class Formula extends FormulaAbstract implements FormulaData {
 	copy() {
 		return new Formula(this);
 	}
-
-	// equal
-
+	
 	simplify() {
 		while (Math.abs(this.terms[this.terms.length - 1]) === 0 && this.terms.length > 1) {
 			this.terms.pop();
