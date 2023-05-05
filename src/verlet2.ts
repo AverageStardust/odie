@@ -59,8 +59,8 @@ class Point {
 
 	constructor(verlet: Verlet, options: PointOptions) {
 		this.verlet = verlet;
-		this.position = options.position.copy();
-		this.lastPosition = options.position.copy();
+		this.position = new Vec2(options.position);
+		this.lastPosition = new Vec2(options.position);
 		this.mass = options.mass ?? 1;
 
 		this.verlet.points.add(this);

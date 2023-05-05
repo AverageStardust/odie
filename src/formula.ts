@@ -16,12 +16,12 @@ export function formulaDataFromArgs(args: FormulaArgs): FormulaData {
 	return { terms };
 }
 
-abstract class FormulaAbstract {
-	protected abstract getTarget(): Formula;
+export class Formula implements FormulaData {
+	terms: number[];
 
 	add(...args: FormulaArgs) {
 		const addend = formulaDataFromArgs(args);
-		const target = this.getTarget();
+		const target = new Formula();
 		for (let i = 0; i < addend.terms.length; i++) {
 			if (i < target.terms.length) {
 				target.terms[i] += addend.terms[i];
@@ -34,7 +34,7 @@ abstract class FormulaAbstract {
 
 	sub(...args: FormulaArgs) {
 		const subtrahend = formulaDataFromArgs(args);
-		const target = this.getTarget();
+		const target = new Formula();
 		for (let i = 0; i < subtrahend.terms.length; i++) {
 			if (i < target.terms.length) {
 				target.terms[i] -= subtrahend.terms[i];
@@ -47,7 +47,7 @@ abstract class FormulaAbstract {
 
 	mul(...args: FormulaArgs) {
 		const multiplier = formulaDataFromArgs(args);
-		const target = this.getTarget();
+		const target = new Formula();
 		const productTerms = Array(
 			Math.max(0, target.terms.length + multiplier.terms.length - 1)).fill(0);
 
@@ -63,7 +63,7 @@ abstract class FormulaAbstract {
 
 	divWithRem(...args: FormulaArgs): { quotient: Formula, remainder: Formula } {
 		const divisor = formulaDataFromArgs(args);
-		const target = this.getTarget();
+		const target = new Formula();
 		const quotientTerms = Array(
 			Math.max(0, target.terms.length - divisor.terms.length + 1));
 
@@ -77,7 +77,7 @@ abstract class FormulaAbstract {
 		}
 
 		target.simplify();
-		const remainder = target.copy();
+		const remainder = new Formula(target);
 		target.terms = quotientTerms;
 		return {
 			quotient: target.simplify(),
@@ -90,18 +90,13 @@ abstract class FormulaAbstract {
 	}
 
 	rem(...args: FormulaArgs): Formula {
-		const target = this.getTarget();
+		const target = new Formula();
 		const remainder = this.divWithRem(...args as any).remainder;
 		target.terms = remainder.terms;
 		return remainder;
 	}
-}
-
-export class Formula extends FormulaAbstract implements FormulaData {
-	terms: number[];
 
 	constructor(...args: [] | FormulaArgs) {
-		super();
 		if (args.length === 0) {
 			this.terms = [0];
 		} else {
@@ -111,14 +106,6 @@ export class Formula extends FormulaAbstract implements FormulaData {
 	}
 
 	protected getTarget(): Formula {
-		return new Formula(this);
-	}
-
-	get set() {
-		return new FormulaMutable(this);
-	}
-
-	copy() {
 		return new Formula(this);
 	}
 	
@@ -199,18 +186,5 @@ export class Formula extends FormulaAbstract implements FormulaData {
 	get isZero() {
 		this.simplify();
 		return this.terms.length === 1 && this.terms[0] === 0;
-	}
-}
-
-class FormulaMutable extends FormulaAbstract {
-	target: Formula;
-
-	constructor(target: Formula) {
-		super();
-		this.target = target;
-	}
-
-	protected getTarget(): Formula {
-		return this.target;
 	}
 }
