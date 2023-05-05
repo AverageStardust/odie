@@ -25,9 +25,7 @@ export class Verlet {
 	points: Set<Point> = new Set();
 	links: Set<Link> = new Set();
 
-	constructor(options: VerletOptions) {
-		const spaceDepth = Math.round(Math.log2(Math.sqrt(this.bound.area)));
-	}
+	constructor(options: VerletOptions) {}
 
 	step() {
 		for (const point of this.points) point._stepPosition();
