@@ -1,9 +1,7 @@
 import { Bound2 } from "./bound2";
 import { Vec2, Vec2Data } from "./vector2";
 
-interface VerletOptions {
-	bound: Bound2;
-}
+interface VerletOptions {}
 
 interface PointOptions {
 	position: Vec2;
@@ -26,10 +24,8 @@ interface LinkPoint {
 export class Verlet {
 	points: Set<Point> = new Set();
 	links: Set<Link> = new Set();
-	bound: Bound2;
 
 	constructor(options: VerletOptions) {
-		this.bound = options.bound;
 		const spaceDepth = Math.round(Math.log2(Math.sqrt(this.bound.area)));
 	}
 
