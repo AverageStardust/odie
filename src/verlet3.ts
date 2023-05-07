@@ -1,9 +1,9 @@
-import { Vec2 } from "./vector2";
+import { Vec3 } from "./vector3";
 
-interface Verlet2Options {}
+interface Verlet3Options {}
 
 interface PointOptions {
-	position: Vec2;
+	position: Vec3;
 	mass?: number;
 }
 
@@ -15,11 +15,11 @@ interface LinkOptions {
 	breakingThreshold?: number;
 }
 
-export class Verlet2 {
+export class Verlet3 {
 	points: Set<Point> = new Set();
 	links: Set<Link> = new Set();
 
-	constructor(options: Verlet2Options) {}
+	constructor(options: Verlet3Options) {}
 
 	step() {
 		for (const point of this.points) point._stepPosition();
@@ -37,28 +37,28 @@ export class Verlet2 {
 }
 
 class Point {
-	verlet: Verlet2;
+	verlet: Verlet3;
 	links: Set<Link> = new Set();
 
-	position: Vec2;
-	lastPosition: Vec2;
-	force: Vec2 = Vec2.Zero;
+	position: Vec3;
+	lastPosition: Vec3;
+	force: Vec3 = Vec3.Zero;
 	mass: number;
 
-	constructor(verlet: Verlet2, options: PointOptions) {
+	constructor(verlet: Verlet3, options: PointOptions) {
 		this.verlet = verlet;
-		this.position = new Vec2(options.position);
-		this.lastPosition = new Vec2(options.position);
+		this.position = new Vec3(options.position);
+		this.lastPosition = new Vec3(options.position);
 		this.mass = options.mass ?? 1;
 
 		this.verlet.points.add(this);
 	}
 
-	get velocity(): Vec2 {
+	get velocity(): Vec3 {
 		return this.position.sub(this.lastPosition);
 	}
 
-	set velocity(velocity: Vec2) {
+	set velocity(velocity: Vec3) {
 		this.lastPosition = this.position.sub(velocity);
 	}
 
@@ -67,7 +67,7 @@ class Point {
 		for (const link of this.links) link.delete();
 	}
 
-	translate(displacement: Vec2) {
+	translate(displacement: Vec3) {
 		this.position = this.position.add(displacement);
 		this.lastPosition = this.lastPosition.add(displacement);
 	}
@@ -80,12 +80,12 @@ class Point {
 
 	_applyForce() {
 		this.position = this.position.add(this.force.div(this.mass));
-		this.force = Vec2.Zero;
+		this.force = Vec3.Zero;
 	}
 }
 
 class Link {
-	verlet: Verlet2;
+	verlet: Verlet3;
 	pointA: Point;
 	pointB: Point;
 
@@ -93,7 +93,7 @@ class Link {
 	springStrength: number;
 	breakingThreshold: number;
 
-	constructor(verlet: Verlet2, options: LinkOptions) {
+	constructor(verlet: Verlet3, options: LinkOptions) {
 		this.verlet = verlet;
 		this.pointA = options.pointA;
 		this.pointB = options.pointB;

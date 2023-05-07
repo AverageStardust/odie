@@ -7,4 +7,5 @@ export * from "./space3";
 export * from "./vector2";
 export * from "./vector3";
 export * from "./verlet2";
-export const version = 11;
+export * from "./verlet3";
+export const version = 12;
